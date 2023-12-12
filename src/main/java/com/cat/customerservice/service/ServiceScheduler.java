@@ -10,9 +10,11 @@ import com.cat.customerservice.repository.CustomerServiceCounterRepository;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.Optional;
 
 @Service
@@ -25,7 +27,7 @@ public class ServiceScheduler {
 
     private final CustomerMapper customerMapper;
 
-    private final static int COUNTER_ID = 1;
+    public final static int COUNTER_ID = 1;
 
     @Autowired
     public ServiceScheduler(CustomerRepository customerRepository,
@@ -34,6 +36,23 @@ public class ServiceScheduler {
         this.customerRepository = customerRepository;
         this.counterRepository = counterRepository;
         this.customerMapper = customerMapper;
+    }
+
+    @PostConstruct
+    @Transactional
+    public void init() {
+        try {
+            Optional<CustomerServiceCounterEntity> counterEntityOpt = counterRepository.findById(COUNTER_ID);
+            CustomerServiceCounterEntity counterEntity;
+            if (counterEntityOpt.isEmpty()) {
+                LOG.debug("Initializing the CustomerServiceCounter with Id {}", COUNTER_ID);
+                counterEntity = new CustomerServiceCounterEntity(COUNTER_ID, 0, 0);
+                counterRepository.save(counterEntity);
+                LOG.debug("The CustomerServiceCounter with Id {} is successfully initialized", COUNTER_ID);
+            }
+        } catch (DuplicateKeyException duEx) {
+            LOG.info("CustomerServiceCounter with Id {} is already existed", COUNTER_ID);
+        }
     }
 
     @Transactional
@@ -55,7 +74,7 @@ public class ServiceScheduler {
             CustomerEntity customerEntity = vipOpt.get();
             customerEntity.setServingStatus(ServingStatus.SERVED);
             customerRepository.save(customerEntity);
-            increaseCounter(CustomerType.VIP, COUNTER_ID);
+            increaseCounter(CustomerType.VIP);
             return Optional.of(customerMapper.entityToApi(vipOpt.get()));
         }
 
@@ -66,7 +85,7 @@ public class ServiceScheduler {
             CustomerEntity customerEntity = regularOpt.get();
             customerEntity.setServingStatus(ServingStatus.SERVED);
             customerRepository.save(customerEntity);
-            increaseCounter(CustomerType.REGULAR, COUNTER_ID);
+            increaseCounter(CustomerType.REGULAR);
             return Optional.of(customerMapper.entityToApi(regularOpt.get()));
         }
 
@@ -79,17 +98,11 @@ public class ServiceScheduler {
     }
 
     @Transactional
-    public void increaseCounter(CustomerType customerType, int counterId) {
-        Optional<CustomerServiceCounterEntity> counterEntityOpt = counterRepository.findById(counterId);
-        CustomerServiceCounterEntity counterEntity;
-        if (counterEntityOpt.isEmpty()) {
-            counterEntity = new CustomerServiceCounterEntity(counterId, 0, 0);
-            counterRepository.save(counterEntity);
-        }
+    public void increaseCounter(CustomerType customerType) {
         if (customerType == CustomerType.VIP) {
-            counterRepository.increaseVIPCounter(counterId);
+            counterRepository.increaseVIPCounter(COUNTER_ID);
         } else {
-            counterRepository.increaseRegularCounter(counterId);
+            counterRepository.increaseRegularCounter(COUNTER_ID);
         }
     }
 }
