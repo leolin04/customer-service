@@ -34,7 +34,7 @@ public class CustomerRepositoryTests extends MySqlTestBase {
     }
 
     @Test
-    public void create() {
+    public void testCreate() {
         CustomerEntity customerEntity = new CustomerEntity(
                 "full name",
                 "1718-001-1234",
@@ -51,7 +51,7 @@ public class CustomerRepositoryTests extends MySqlTestBase {
     }
 
     @Test
-    public void update() {
+    public void testUpdate() {
         CustomerEntity customerEntity = new CustomerEntity(
                 "full name",
                 "1718-001-1234",

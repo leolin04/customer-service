@@ -14,8 +14,7 @@ public class Customer {
     public Customer() {
     }
 
-    public Customer(int ticketId, String name, String phoneNumber, CustomerType customerType) {
-        this.ticketId = ticketId;
+    public Customer(String name, String phoneNumber, CustomerType customerType) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.customerType = customerType;

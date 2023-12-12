@@ -30,7 +30,7 @@ public class CustomerServiceCounterEntityRepositoryTests extends MySqlTestBase {
     }
 
     @Test
-    public void create() {
+    public void testCreate() {
         CustomerServiceCounterEntity serviceCounter = new CustomerServiceCounterEntity(1, 2, 0);
         repository.save(serviceCounter);
         CustomerServiceCounterEntity savedCounter = repository.findById(serviceCounter.getId()).get();
@@ -39,7 +39,7 @@ public class CustomerServiceCounterEntityRepositoryTests extends MySqlTestBase {
     }
 
     @Test
-    public void update() {
+    public void testUpdate() {
         CustomerServiceCounterEntity serviceCounter = new CustomerServiceCounterEntity(1, 2, 0);
         repository.save(serviceCounter);
 
@@ -54,7 +54,7 @@ public class CustomerServiceCounterEntityRepositoryTests extends MySqlTestBase {
     }
 
     @Test
-    public void increaseCounters() {
+    public void testIncreaseCounters() {
         CustomerServiceCounterEntity serviceCounter = new CustomerServiceCounterEntity(1, 0, 0);
         repository.save(serviceCounter);
         CustomerServiceCounterEntity saved = repository.findById(serviceCounter.getId()).get();

@@ -19,7 +19,6 @@ public interface CustomerMapper {
             @Mapping(target = "id", ignore = true),
             @Mapping(target = "version", ignore = true),
             @Mapping(target = "checkInTime", ignore = true),
-            @Mapping(target = "ticketId", ignore = true),
             @Mapping(target = "servingStatus", ignore = true),
     })
     CustomerEntity apiToEntity(Customer customer);

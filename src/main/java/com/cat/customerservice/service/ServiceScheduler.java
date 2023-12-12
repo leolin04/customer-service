@@ -43,10 +43,9 @@ public class ServiceScheduler {
     public void init() {
         try {
             Optional<CustomerServiceCounterEntity> counterEntityOpt = counterRepository.findById(COUNTER_ID);
-            CustomerServiceCounterEntity counterEntity;
             if (counterEntityOpt.isEmpty()) {
                 LOG.debug("Initializing the CustomerServiceCounter with Id {}", COUNTER_ID);
-                counterEntity = new CustomerServiceCounterEntity(COUNTER_ID, 0, 0);
+                CustomerServiceCounterEntity counterEntity = new CustomerServiceCounterEntity(COUNTER_ID, 0, 0);
                 counterRepository.save(counterEntity);
                 LOG.debug("The CustomerServiceCounter with Id {} is successfully initialized", COUNTER_ID);
             }
@@ -58,6 +57,7 @@ public class ServiceScheduler {
     @Transactional
     public Customer checkIn(Customer customer) {
         CustomerEntity customerEntity = customerMapper.apiToEntity(customer);
+        customerEntity.setServingStatus(ServingStatus.CHECK_IN);
         customerRepository.save(customerEntity);
         return customerMapper.entityToApi(customerEntity);
     }
