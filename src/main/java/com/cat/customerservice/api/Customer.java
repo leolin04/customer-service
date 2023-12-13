@@ -1,10 +1,12 @@
 package com.cat.customerservice.api;
 
 import com.cat.customerservice.entity.CustomerType;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
 
 public class Customer {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private int ticketId;
 
     private String name;

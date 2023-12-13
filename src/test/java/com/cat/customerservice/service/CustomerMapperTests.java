@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class CustomerMapperTests {
 
-    private  CustomerMapper mapper = Mappers.getMapper(CustomerMapper.class);
+    private CustomerMapper mapper = Mappers.getMapper(CustomerMapper.class);
 
     @Test
     public void testApiToEntity() {

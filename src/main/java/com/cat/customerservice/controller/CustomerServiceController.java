@@ -3,7 +3,6 @@ package com.cat.customerservice.controller;
 
 import com.cat.customerservice.api.Customer;
 import com.cat.customerservice.exception.NoMoreContentException;
-import com.cat.customerservice.exception.NotFoundException;
 import com.cat.customerservice.service.ServiceScheduler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,9 +51,7 @@ public class CustomerServiceController {
             description = "Will try to service the VIP customers first, then the Regular customers.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description =
-                    "Next Customer"),
-            @ApiResponse(responseCode = "204", description =
-                    "If there is no more customer to serve")
+                    "Next Customer. If there is no more customers, then a dummy customer with {ticketId:-1} is returned.")
     })
     @GetMapping(
             value = "/v1/nextcustomer",
@@ -68,12 +64,12 @@ public class CustomerServiceController {
             if (customerOpt.isPresent()) {
                 return customerOpt.get();
             } else {
-                throw new NoMoreContentException("no more customers to serve");
+                Customer empty = new Customer();
+                empty.setTicketId(-1);
+                return empty;
             }
         } catch (RuntimeException ex) {
-            if (!(ex instanceof NoMoreContentException)) {
-                LOG.warn("getNextCustomer failed", ex);
-            }
+            LOG.warn("getNextCustomer failed", ex);
             throw ex;
         }
     }

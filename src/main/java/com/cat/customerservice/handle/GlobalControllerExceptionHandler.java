@@ -38,13 +38,13 @@ class GlobalControllerExceptionHandler {
         return createHttpErrorInfo(NOT_FOUND, request, ex);
     }
 
-    @ResponseStatus(NO_CONTENT)
-    @ExceptionHandler(NoMoreContentException.class)
-    public @ResponseBody HttpErrorInfo handleNoMoreContentException(
-            ServerHttpRequest request, NoMoreContentException ex) {
-
-        return createHttpErrorInfo(NO_CONTENT, request, ex);
-    }
+//    @ResponseStatus(NO_CONTENT)
+//    @ExceptionHandler(NoMoreContentException.class)
+//    public @ResponseBody HttpErrorInfo handleNoMoreContentException(
+//            ServerHttpRequest request, NoMoreContentException ex) {
+//
+//        return createHttpErrorInfo(NO_CONTENT, request, ex);
+//    }
 
     private HttpErrorInfo createHttpErrorInfo(
             HttpStatus httpStatus, ServerHttpRequest request, Exception ex) {
