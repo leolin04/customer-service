@@ -88,5 +88,6 @@ docker-compose down
 * We need to improve the logging logic and collect the log. 
 * We can run multiple instances of the service with a db replica set. 
 * We need to further clarify the stages of the customer status from `checkin` `in-serving` and `served`.
-  The current simplified logic only transit the customer from `checkin` to `served`. 
+  The current simplified logic only transits the customer from `checkin` to `served`. 
 * Serving Online and Phone Call Customers. 
+* Open to other improvement suggestions. 
