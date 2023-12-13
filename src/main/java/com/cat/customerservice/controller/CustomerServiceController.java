@@ -53,7 +53,7 @@ public class CustomerServiceController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Next Customer. " +
-                            "If there is no more customers, then a dummy customer with {ticketId:-1}. " +
+                            "If there is no more customers, then a dummy customer with {ticketId:-1} is returned. " +
                             "Returning the dummy customer might be more api client friendly than HTTP 204")})
     @GetMapping(
             value = "/v1/nextcustomer",
@@ -85,7 +85,7 @@ public class CustomerServiceController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Next Customer. " +
-                            "If there is no more customers, then a dummy customer with {ticketId:-1}. " +
+                            "If there is no more customers, then a dummy customer with {ticketId:-1} is returned. " +
                             "Returning the dummy customer might be more api client friendly than HTTP 204")})
     @GetMapping(
             value = "/v1/nextcustomer21",

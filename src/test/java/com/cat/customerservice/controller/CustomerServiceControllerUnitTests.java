@@ -1,6 +1,7 @@
 package com.cat.customerservice.controller;
 
 
+import com.cat.customerservice.MySqlTestBase;
 import com.cat.customerservice.api.Customer;
 import com.cat.customerservice.entity.CustomerType;
 import com.cat.customerservice.service.ServiceScheduler;
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {"spring.main.allow-bean-definition-overriding=true"})
-public class CustomerServiceControllerUnitTests {
+public class CustomerServiceControllerUnitTests extends MySqlTestBase {
     private static final Logger LOG = LoggerFactory.getLogger(CustomerServiceControllerUnitTests.class);
 
     @Autowired
