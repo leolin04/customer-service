@@ -3,6 +3,8 @@
 This service is implemented with Java (version 17), Spring Boot 2.7, and MySQL. 
 The build framework is Maven 3, and Docker is used to run and test the service. 
 
+Github: https://github.com/leolin04/customer-service
+
 ## Data Models
 * com.cat.customerservice.api.Customer 
   * This is the Customer api model used by the restful client to check in the customers and get next customer. 
