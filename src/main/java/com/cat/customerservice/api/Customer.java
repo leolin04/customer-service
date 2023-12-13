@@ -24,6 +24,13 @@ public class Customer {
         this.customerType = customerType;
     }
 
+    public Customer(int ticketId, String name, String phoneNumber, CustomerType customerType) {
+        this.ticketId = ticketId;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.customerType = customerType;
+    }
+
     public int getTicketId() {
         return ticketId;
     }

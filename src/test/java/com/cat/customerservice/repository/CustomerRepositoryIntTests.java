@@ -22,8 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @Transactional(propagation = NOT_SUPPORTED)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class CustomerRepositoryTests extends MySqlTestBase {
-    private static final Logger LOG = LoggerFactory.getLogger(CustomerRepositoryTests.class);
+public class CustomerRepositoryIntTests extends MySqlTestBase {
+    private static final Logger LOG = LoggerFactory.getLogger(CustomerRepositoryIntTests.class);
 
     @Autowired
     private CustomerRepository repository;
@@ -90,6 +90,32 @@ public class CustomerRepositoryTests extends MySqlTestBase {
 
         CustomerEntity foundCustomerEntity = repository.findTopByCustomerTypeAndServingStatusOrderByCheckInTimeAsc(
                 CustomerType.REGULAR, ServingStatus.CHECK_IN).get();
+
+        assertEquals(customerEntity1.getId(), foundCustomerEntity.getId());
+        assertEquals(customerEntity1.getName(), foundCustomerEntity.getName());
+        assertEquals(customerEntity1.getCustomerType(), foundCustomerEntity.getCustomerType());
+        assertEquals(ServingStatus.CHECK_IN, customerEntity1.getServingStatus());
+    }
+
+    @Test
+    public void testFindNextCheckinCustomerByType() {
+        CustomerEntity customerEntity1 = new CustomerEntity(
+                "full name 1",
+                "1718-001-1234",
+                CustomerType.REGULAR,
+                new Date(),
+                ServingStatus.CHECK_IN);
+
+        CustomerEntity customerEntity2 = new CustomerEntity(
+                "full name 2",
+                "1718-001-1235",
+                CustomerType.VIP,
+                new Date(),
+                ServingStatus.CHECK_IN);
+        repository.save(customerEntity1);
+        repository.save(customerEntity2);
+
+        CustomerEntity foundCustomerEntity = repository.findNextCheckinCustomerByType(CustomerType.REGULAR).get();
 
         assertEquals(customerEntity1.getId(), foundCustomerEntity.getId());
         assertEquals(customerEntity1.getName(), foundCustomerEntity.getName());

@@ -15,4 +15,8 @@ public interface CustomerRepository extends CrudRepository<CustomerEntity, Integ
             CustomerType customerType,
             ServingStatus servingStatus);
 
+    default Optional<CustomerEntity> findNextCheckinCustomerByType(CustomerType customerType) {
+        return findTopByCustomerTypeAndServingStatusOrderByCheckInTimeAsc(customerType, ServingStatus.CHECK_IN);
+    }
+
 }

@@ -11,7 +11,7 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CustomerMapperTests {
+public class CustomerMapperUnitTests {
 
     private CustomerMapper mapper = Mappers.getMapper(CustomerMapper.class);
 

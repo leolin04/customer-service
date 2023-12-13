@@ -68,8 +68,7 @@ public class ServiceScheduler {
     @Transactional
     public Optional<Customer> getNextCustomer() {
         // try to serve a vip customer first
-        Optional<CustomerEntity> vipOpt = customerRepository
-                .findTopByCustomerTypeAndServingStatusOrderByCheckInTimeAsc(CustomerType.VIP, ServingStatus.CHECK_IN);
+        Optional<CustomerEntity> vipOpt = customerRepository.findNextCheckinCustomerByType(CustomerType.VIP);
         if (vipOpt.isPresent()) {
             CustomerEntity customerEntity = vipOpt.get();
             customerEntity.setServingStatus(ServingStatus.SERVED);
@@ -79,8 +78,7 @@ public class ServiceScheduler {
         }
 
         // try to serve a regular customer since no more vips
-        Optional<CustomerEntity> regularOpt = customerRepository
-                .findTopByCustomerTypeAndServingStatusOrderByCheckInTimeAsc(CustomerType.REGULAR, ServingStatus.CHECK_IN);
+        Optional<CustomerEntity> regularOpt = customerRepository.findNextCheckinCustomerByType(CustomerType.REGULAR);
         if (regularOpt.isPresent()) {
             CustomerEntity customerEntity = regularOpt.get();
             customerEntity.setServingStatus(ServingStatus.SERVED);
@@ -92,9 +90,49 @@ public class ServiceScheduler {
         return Optional.empty();
     }
 
-    // Server VIP and Regular Customers with the VIP : Regular rate of 2:1
-    public CustomerEntity getNextCustomer21() {
-        return null;
+
+    /**
+     * Try to serve the next customer with the ratio of 2:1 of (VIPs : Regulars).
+     * If there is no more next customer in the desired type, then it will try to serve
+     * a customer from other type.
+     */
+    @Transactional
+    public Optional<Customer> getNextCustomer21() {
+        CustomerServiceCounterEntity counter = counterRepository.findById(COUNTER_ID).get();
+        CustomerType nextCustomerType
+                = getNextCustomerType(counter.getVipServedCount(), counter.getRegularServedCount());
+
+        LOG.debug("try to get next customer for CustomerType {}", nextCustomerType);
+        Optional<CustomerEntity> nextCustomerOpt
+                = customerRepository.findNextCheckinCustomerByType(nextCustomerType);
+        if (nextCustomerOpt.isPresent()) {
+            LOG.debug("found next customer: {}", nextCustomerOpt.get());
+            CustomerEntity nextCustomer = nextCustomerOpt.get();
+            nextCustomer.setServingStatus(ServingStatus.SERVED);
+            customerRepository.save(nextCustomer);
+            return Optional.of(customerMapper.entityToApi(nextCustomer));
+        }
+
+        LOG.debug("can not find next customer for the desired CustomerType {}", nextCustomerType);
+
+        CustomerType otherCustomerType = nextCustomerType == CustomerType.VIP
+                ? CustomerType.REGULAR
+                : CustomerType.VIP;
+
+        LOG.debug("try to find next customer for the other CustomerType {}", otherCustomerType);
+
+        nextCustomerOpt
+                = customerRepository.findNextCheckinCustomerByType(otherCustomerType);
+        if (nextCustomerOpt.isPresent()) {
+            LOG.debug("found next customer: {}", nextCustomerOpt.get());
+            CustomerEntity nextCustomer = nextCustomerOpt.get();
+            nextCustomer.setServingStatus(ServingStatus.SERVED);
+            customerRepository.save(nextCustomer);
+            return Optional.of(customerMapper.entityToApi(nextCustomer));
+        }
+
+        LOG.debug("no more customer to serve");
+        return Optional.empty();
     }
 
     @Transactional
@@ -103,6 +141,30 @@ public class ServiceScheduler {
             counterRepository.increaseVIPCounter(COUNTER_ID);
         } else {
             counterRepository.increaseRegularCounter(COUNTER_ID);
+        }
+    }
+
+    /**
+     *  Try to serve the (VIPs : Regulars) with a (2 : 1) ratio
+     */
+    CustomerType getNextCustomerType(int vipServedCount, int regularServedCount) {
+        LOG.debug("getNextCustomerType, vipServedCount: {}, regularServedCount: {}",
+                vipServedCount, regularServedCount);
+
+        if (regularServedCount == 0) {
+            if (vipServedCount < 2) {
+                return CustomerType.VIP;
+            } else {
+                return CustomerType.REGULAR;
+            }
+        }
+
+        double ratio = vipServedCount * 1.0 / regularServedCount;
+        LOG.debug("getNextCustomerType, vip : regular, ratio: {}", ratio);
+        if (ratio <= 2.0) {
+            return CustomerType.VIP;
+        } else {
+            return CustomerType.REGULAR;
         }
     }
 }

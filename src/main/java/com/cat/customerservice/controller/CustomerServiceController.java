@@ -50,9 +50,11 @@ public class CustomerServiceController {
             summary = "Get Next Customer",
             description = "Will try to service the VIP customers first, then the Regular customers.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description =
-                    "Next Customer. If there is no more customers, then a dummy customer with {ticketId:-1} is returned.")
-    })
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Next Customer. " +
+                            "If there is no more customers, then a dummy customer with {ticketId:-1}. " +
+                            "Returning the dummy customer might be more api client friendly than HTTP 204")})
     @GetMapping(
             value = "/v1/nextcustomer",
             produces = "application/json"
@@ -70,6 +72,38 @@ public class CustomerServiceController {
             }
         } catch (RuntimeException ex) {
             LOG.warn("getNextCustomer failed", ex);
+            throw ex;
+        }
+    }
+
+    @Operation(
+            summary = "Get next customer in 2:1 ratio of (VIP : Regular)",
+            description = "Try to get next customer in 2:1 ratio of (VIP : Regular). " +
+                    "If there is no more customer with desired customer type, then it will try to " +
+                    "get next customer from the other type.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Next Customer. " +
+                            "If there is no more customers, then a dummy customer with {ticketId:-1}. " +
+                            "Returning the dummy customer might be more api client friendly than HTTP 204")})
+    @GetMapping(
+            value = "/v1/nextcustomer21",
+            produces = "application/json"
+    )
+    public Customer getNextCustomer21() {
+        try {
+            LOG.debug("trying to get the next customer in 2:1 ratio of VIP : Regular");
+            Optional<Customer> customerOpt = serviceScheduler.getNextCustomer21();
+            if (customerOpt.isPresent()) {
+                return customerOpt.get();
+            } else {
+                Customer empty = new Customer();
+                empty.setTicketId(-1);
+                return empty;
+            }
+        } catch (RuntimeException ex) {
+            LOG.warn("getNextCustomer21 failed", ex);
             throw ex;
         }
     }

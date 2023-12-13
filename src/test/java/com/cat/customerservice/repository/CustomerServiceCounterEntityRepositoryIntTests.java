@@ -18,8 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @Transactional(propagation = NOT_SUPPORTED)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class CustomerServiceCounterEntityRepositoryTests extends MySqlTestBase {
-    private static final Logger LOG = LoggerFactory.getLogger(CustomerServiceCounterEntityRepositoryTests.class);
+public class CustomerServiceCounterEntityRepositoryIntTests extends MySqlTestBase {
+    private static final Logger LOG = LoggerFactory.getLogger(CustomerServiceCounterEntityRepositoryIntTests.class);
 
     @Autowired
     private CustomerServiceCounterRepository repository;
