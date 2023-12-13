@@ -10,6 +10,8 @@ This service is implemented with Java (version 17), Spring Boot 2.7, and MySQL. 
 * com.cat.customerservice.entity.CustomerEntity
   * This is the Customer data persistence model to save the customers' records to database.
   * The auto increment customer `id` is used as the `ticketId` in the api view. 
+  * When a customer checks in, the customer will have `ServingStatus.CHECK_IN` status.
+  * When a customer is returned from `ServiceScheduler.getNextCustomer(),` the status is updated to `ServingStatus.SERVED`. 
   
 * com.cat.customerservice.entity.CustomerServiceCounterEntity
   * This is a utility data model to keep tracking of the number of VIP and Regular customers served. 
@@ -84,3 +86,5 @@ docker-compose down
 * We can improve performance by using async and non-blocking logic in the rest controller and in the business service.
 * We need to improve the logging logic, and collect the log. 
 * We can run multiple instances of the service with a db replica set. 
+* We need to further clarify the stages of the customer status from `checkin` `in-serving` and `served`.
+  The current simplified logic only transit the customer from `checkin` to `served`. 
