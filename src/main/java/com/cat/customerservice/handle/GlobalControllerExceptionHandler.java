@@ -2,10 +2,8 @@ package com.cat.customerservice.handle;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
 import com.cat.customerservice.exception.BadRequestException;
-import com.cat.customerservice.exception.InvalidInputException;
 import com.cat.customerservice.exception.NotFoundException;
 import com.cat.customerservice.util.HttpErrorInfo;
 import org.slf4j.Logger;
@@ -36,14 +34,6 @@ class GlobalControllerExceptionHandler {
             ServerHttpRequest request, NotFoundException ex) {
 
         return createHttpErrorInfo(NOT_FOUND, request, ex);
-    }
-
-    @ResponseStatus(UNPROCESSABLE_ENTITY)
-    @ExceptionHandler(InvalidInputException.class)
-    public @ResponseBody HttpErrorInfo handleInvalidInputException(
-            ServerHttpRequest request, InvalidInputException ex) {
-
-        return createHttpErrorInfo(UNPROCESSABLE_ENTITY, request, ex);
     }
 
     private HttpErrorInfo createHttpErrorInfo(

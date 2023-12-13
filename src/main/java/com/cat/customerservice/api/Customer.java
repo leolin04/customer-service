@@ -2,6 +2,8 @@ package com.cat.customerservice.api;
 
 import com.cat.customerservice.entity.CustomerType;
 
+import java.util.Objects;
+
 public class Customer {
     private int ticketId;
 
@@ -50,5 +52,39 @@ public class Customer {
 
     public void setCustomerType(CustomerType customerType) {
         this.customerType = customerType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Customer customer = (Customer) o;
+
+        if (ticketId != customer.ticketId) return false;
+        if (!Objects.equals(name, customer.name)) return false;
+        if (!Objects.equals(phoneNumber, customer.phoneNumber))
+            return false;
+        return customerType == customer.customerType;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = ticketId;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (phoneNumber != null ? phoneNumber.hashCode() : 0);
+        result = 31 * result + (customerType != null ? customerType.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("Customer{");
+        sb.append("ticketId=").append(ticketId);
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", phoneNumber='").append(phoneNumber).append('\'');
+        sb.append(", customerType=").append(customerType);
+        sb.append('}');
+        return sb.toString();
     }
 }

@@ -17,6 +17,27 @@ logging:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
+springdoc:
+  swagger-ui:
+    path: /openapi/swagger-ui.html
+  api-docs:
+    path: /openapi/v3/api-docs
+  packages-to-scan: com.cat
+  paths-to-match: /**
+
+api:
+  common:
+    version: 1.0.0
+    title: Customer Service Scheduler API
+    description: Customer Service Scheduler
+    termsOfService: Free and use with own risks
+    license: The Open Source MIT License
+    licenseUrl: https://opensource.org/license/mit/
+    contact:
+      name: Leo Lin
+      url: http://localhost
+      email: contact@mail.com
+
 ---
 spring.config.activate.on-profile: docker
 
