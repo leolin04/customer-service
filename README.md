@@ -1,6 +1,7 @@
 # Service Scheduler Restful API Implementation
 
-This service is implemented with Java (version 17), Spring Boot 2.7, and MySQL. The build framework is Maven 3.
+This service is implemented with Java (version 17), Spring Boot 2.7, and MySQL. 
+The build framework is Maven 3, and Docker is used to run and test the service. 
 
 ## Data Models
 * com.cat.customerservice.api.Customer 
