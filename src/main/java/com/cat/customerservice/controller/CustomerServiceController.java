@@ -2,6 +2,7 @@ package com.cat.customerservice.controller;
 
 
 import com.cat.customerservice.api.Customer;
+import com.cat.customerservice.exception.NoMoreContentException;
 import com.cat.customerservice.exception.NotFoundException;
 import com.cat.customerservice.service.ServiceScheduler;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,7 +54,7 @@ public class CustomerServiceController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description =
                     "Next Customer"),
-            @ApiResponse(responseCode = "404", description =
+            @ApiResponse(responseCode = "204", description =
                     "If there is no more customer to serve")
     })
     @GetMapping(
@@ -67,10 +68,12 @@ public class CustomerServiceController {
             if (customerOpt.isPresent()) {
                 return customerOpt.get();
             } else {
-                throw new NotFoundException("no more customers to serve");
+                throw new NoMoreContentException("no more customers to serve");
             }
         } catch (RuntimeException ex) {
-            LOG.warn("getNextCustomer failed", ex);
+            if (!(ex instanceof NoMoreContentException)) {
+                LOG.warn("getNextCustomer failed", ex);
+            }
             throw ex;
         }
     }

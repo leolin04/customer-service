@@ -2,8 +2,10 @@ package com.cat.customerservice.handle;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 import com.cat.customerservice.exception.BadRequestException;
+import com.cat.customerservice.exception.NoMoreContentException;
 import com.cat.customerservice.exception.NotFoundException;
 import com.cat.customerservice.util.HttpErrorInfo;
 import org.slf4j.Logger;
@@ -34,6 +36,14 @@ class GlobalControllerExceptionHandler {
             ServerHttpRequest request, NotFoundException ex) {
 
         return createHttpErrorInfo(NOT_FOUND, request, ex);
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @ExceptionHandler(NoMoreContentException.class)
+    public @ResponseBody HttpErrorInfo handleNoMoreContentException(
+            ServerHttpRequest request, NoMoreContentException ex) {
+
+        return createHttpErrorInfo(NO_CONTENT, request, ex);
     }
 
     private HttpErrorInfo createHttpErrorInfo(
