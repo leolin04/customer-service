@@ -8,7 +8,33 @@ Github: https://github.com/leolin04/customer-service
 ## Data Models
 * com.cat.customerservice.api.Customer 
   * This is the Customer api model used by the restful client to check in the customers and get next customer. 
-  * The `ticketId` is populated after a customer checked in. 
+  * It has a readonly property, `ticketId`, which is populated after a customer checked in. 
+  * Model API Schema:
+    ```
+    "Customer": {
+      "type": "object",
+      "properties": {
+        "ticketId": {
+          "type": "integer",
+          "format": "int32",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string"
+        },
+        "phoneNumber": {
+          "type": "string"
+        },
+        "customerType": {
+          "type": "string",
+          "enum": [
+            "VIP",
+            "REGULAR"
+          ]
+        }
+      }
+    }
+    ```
   
 * com.cat.customerservice.entity.CustomerEntity
   * This is the Customer data persistence model to save the customers' records to database.
@@ -42,8 +68,44 @@ Github: https://github.com/leolin04/customer-service
 * com.cat.customerservice.controller.CustomerServiceController
   * The server is using port `9080` to avoid conflicting with the popular `8080` port.  
   * POST `/v1/checkin` endpoint to check in a customer.
+    * Sample Request and Response:
+      ```
+        curl -X 'POST' \
+          'http://localhost:9080/v1/checkin' \
+          -H 'accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -d '{
+                "name": "Full Name",
+                "phoneNumber": "917-001-1987",
+                "customerType": "REGULAR"
+              }'
+      ```
+      Response:
+      ```
+         {
+            "ticketId": 6,
+            "name": "Full Name",
+            "phoneNumber": "917-001-1987",
+            "customerType": "REGULAR"
+         }
+      ```
   * GET `/v1/nextcustomer` endpoint to get next VIP customers first, and then regular customers.
-    * If there is no more customers, then a dummy customer with `{ticketId: -1}` is returned instead of HTTP 204. 
+    * If there is no more customers, then a dummy customer with `{ticketId: -1}` is returned instead of HTTP 204.
+    * Sample Request and Response:
+      ```
+         curl -X 'GET' \
+           'http://localhost:9080/v1/nextcustomer' \
+           -H 'accept: application/json'
+      ```
+      Response:
+      ```
+        {
+          "ticketId": 6,
+          "name": "Full Name",
+          "phoneNumber": "917-001-1987",
+          "customerType": "REGULAR"
+        }
+      ```
   * GET `/v1/nextcustomer21` endpoint to get the next customer with 2:1 ratio of VIPs : Regulars.
     * If there is no more customers, then a dummy customer with `{ticketId: -1}` is returned instead of HTTP 204.
   * OpenAPI/Swagger is used to generate the APIs 
@@ -82,7 +144,7 @@ http://localhost:9080/openapi/swagger-ui.html
 docker-compose down
 ```
 
-## Other Improvements
+## Further Improvements
 * We will use a static db schema in production instead of the dynamic generated and updated.
 * We will add monitoring logic, like prometheus.
 * We will protect the api with oauth and oauth token (like JWT) in production
